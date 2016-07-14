@@ -1,0 +1,5 @@
+Django==1.9.7
+django-auditlog==0.3.3
+django-jsonfield==1.0.0
+Pillow==3.2.0
+wheel==0.24.0
