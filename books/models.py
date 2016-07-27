@@ -51,7 +51,7 @@ class Review(Model):
     content_object = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
-        return self.content_object.__str__()+" -"+self.author
+        return self.content_object.__str__()+" -"+self.author.__str__()
 
 
 class Category(Model):
@@ -132,9 +132,7 @@ class Book(Model):
 
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
-        # return reverse('assets:asset', args=[str(self.id)])
         return reverse('book', args=[self.slug])
-        # return 'book', kwargs={"slug": self.slug}
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
