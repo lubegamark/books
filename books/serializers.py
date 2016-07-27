@@ -88,19 +88,21 @@ class LanguageSerializer(HyperlinkedModelSerializer):
 
 
 class ReviewSerializer(HyperlinkedModelSerializer):
-    content_object = GenericRelatedField({
-        Book: HyperlinkedRelatedField(
-            queryset=Book.objects.all(),
-            view_name='book-detail',
-        ),
-    })
+    reviewed_object = GenericRelatedField(
+        {
+            Book: HyperlinkedRelatedField(
+                queryset=Book.objects.all(),
+                view_name='book-detail',
+
+            ),
+        }, source='content_object', )
 
     class Meta:
         model = Review
-        fields = ('url', 'body', 'rating', 'content_object',)
+        fields = ('url', 'body', 'rating', 'reviewed_object',)
 
 
 class TagSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        exclude = ('created_at', )
+        exclude = ('created_at',)
