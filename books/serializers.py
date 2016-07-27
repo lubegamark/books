@@ -103,6 +103,15 @@ class ReviewSerializer(HyperlinkedModelSerializer):
 
 
 class TagSerializer(HyperlinkedModelSerializer):
+    tagged_object = GenericRelatedField(
+        {
+            Book: HyperlinkedRelatedField(
+                queryset=Book.objects.all(),
+                view_name='book-detail',
+
+            ),
+        }, source='content_object', )
+
     class Meta:
         model = Tag
-        exclude = ('created_at',)
+        exclude = ('content_type', 'created_at',)
