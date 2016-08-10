@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Model, CharField, DateTimeField, ForeignKey, FloatField, TextField, IntegerField, \
-    PositiveIntegerField, ImageField, ManyToManyField, SlugField
+    PositiveIntegerField, ImageField, ManyToManyField, SlugField, URLField
 from django.utils.text import slugify
 
 
@@ -120,7 +120,7 @@ class Book(Model):
     tags = GenericRelation(Tag)
     reviews = GenericRelation(Review)
     #MetaData
-    available_at = ManyToManyField(Source, blank=True,)
+    availability = ManyToManyField(Source, blank=True, through='BookSource', related_name='available_books')
     formats = ManyToManyField(Format, blank=True, related_name='books')
     views = IntegerField(null=True, blank=True,)
     searches = IntegerField(null=True, blank=True,)
@@ -138,6 +138,15 @@ class Book(Model):
         self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
+
+class BookSource(Model):
+    book = ForeignKey(Book)
+    source = ForeignKey(Source)
+    link = URLField(null=True, blank=True)
+
+    def __str__(self):
+        return "{0} - {1}".format(self.book.__str__(), self.source.__str__())
+
 #Auditing
 auditlog.register(Author)
 auditlog.register(Contributor)
@@ -150,5 +159,5 @@ auditlog.register(Format)
 auditlog.register(Source)
 auditlog.register(Book)
 auditlog.register(Book.categories.through)
-auditlog.register(Book.available_at.through)
+auditlog.register(Book.availability.through)
 auditlog.register(Book.formats.through)
