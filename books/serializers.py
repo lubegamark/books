@@ -2,9 +2,10 @@
 from django.contrib.auth.models import User
 from generic_relations.relations import GenericRelatedField
 from rest_framework.relations import RelatedField, HyperlinkedRelatedField, HyperlinkedIdentityField
-from rest_framework.serializers import HyperlinkedModelSerializer
+from rest_framework.serializers import HyperlinkedModelSerializer, PrimaryKeyRelatedField, Field, ReadOnlyField
 
-from books.models import Book, Author, Publisher, Review, Category, Contributor, Tag, Source, Format, Language
+from books.models import Book, Author, Publisher, Review, Category, Contributor, Tag, Source, Format, Language, \
+    BookSource
 
 
 class ReviewGenericRelatedField(RelatedField):
@@ -27,6 +28,31 @@ class UserSerializer(HyperlinkedModelSerializer):
         fields = ('url', 'username', 'email')
 
 
+class SourceSerializer(HyperlinkedModelSerializer):
+    class Meta:
+        model = Source
+        exclude = ('created_at',)
+
+
+class BookSourceSerializer2(HyperlinkedModelSerializer):
+
+    class Meta:
+        model = BookSource
+
+
+class BookSourceSerializer(HyperlinkedModelSerializer):
+    source = ReadOnlyField(source='source.source')
+    source_url = HyperlinkedRelatedField(
+        source='source',
+        read_only=True,
+        view_name='source-detail'
+    )
+
+    class Meta:
+        model = BookSource
+        fields = ('source', 'source_url', 'link',)
+
+
 class BookSerializer(HyperlinkedModelSerializer):
     reviews = HyperlinkedRelatedField(
         many=True,
@@ -39,6 +65,7 @@ class BookSerializer(HyperlinkedModelSerializer):
         read_only=True,
         view_name='tag-detail'
     )
+    availability = BookSourceSerializer(source='booksource_set', many=True)
 
     class Meta:
         model = Book
@@ -72,12 +99,6 @@ class CategorySerializer(HyperlinkedModelSerializer):
 class FormatSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Format
-        exclude = ('created_at',)
-
-
-class SourceSerializer(HyperlinkedModelSerializer):
-    class Meta:
-        model = Source
         exclude = ('created_at',)
 
 
