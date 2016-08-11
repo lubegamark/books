@@ -3,7 +3,8 @@ django-auditlog==0.3.3
 django-filter==0.13.0
 django-jsonfield==1.0.0
 djangorestframework==3.4.0
+djangorestframework-jwt==1.8.0
 Markdown==2.6.6
 Pillow==3.2.0
+PyJWT==1.4.1
 rest-framework-generic-relations==1.1.0
-wheel==0.24.0
